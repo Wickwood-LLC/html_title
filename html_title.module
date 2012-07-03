@@ -1,0 +1,88 @@
+<?php
+
+/**
+ * @file
+ * This module enables some HTML to be used in node titles but filters all other
+ * markup to prevent XSS vulnerablities. It strips markup from RSS and views
+ * JSON display output to eliminate unsightly encoded markup.
+ */
+
+/**
+ * Implements hook_help().
+ */
+function html_title_help($section) {
+  switch ($section) {
+    case 'admin/modules#description':
+      return t('This module filters node titles for XSS vulnerabilities but allows selected html markup.');
+  }
+}
+
+/**
+ * Implementation of hook_menu()
+ */
+function html_title_menu() {
+  $items['admin/settings/html_title'] = array(
+    'title'            => 'HTML Title settings',
+    'description'      => 'Configure HTML tags used in node titles.',
+    'access arguments' => array('administer site configuration'),
+    'page callback'    => 'drupal_get_form',
+    'page arguments'   => array('html_title_admin_settings'),
+    'type'             => MENU_NORMAL_ITEM,
+    'file'             => 'html_title.admin.inc',
+  );
+  return $items;
+}
+
+/**
+ * Implementation of hook_preprocess_page()
+ */
+function html_title_preprocess_page(&$vars) {
+  if (array_key_exists('node', $vars)) {
+    $elements = variable_get('html_title_allowed_elements', array('em', 'sub', 'sup'));
+    // Reset title to allow safe HTML
+    $vars['title'] = filter_xss($vars['node']->title, $elements);
+    // Reset head title
+    drupal_set_title($vars['title']);
+  }
+}
+
+/**
+ * Implementation of hook_preprocess_node()
+ */
+function html_title_preprocess_node(&$node) {
+  if (isset($node['html_title_raw'])) {
+    $elements = variable_get('html_title_allowed_elements', array('em', 'sub', 'sup'));
+    $node['title'] = filter_xss($node['html_title_raw'], $elements);
+  }
+}
+
+/**
+ * Implementation of hook_nodeapi().
+ */
+function html_title_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
+  switch ($op) {
+    case 'load':
+      // Capture original title for use in hook_preprocess_node
+      return array('html_title_raw' => $node->title);
+      break;
+    case 'rss item':
+      // Strip html from titles
+      $node->title = strip_tags($node->title);
+      break;
+  }
+}
+
+/**
+ * Implementation of hook_views_pre_render
+ */
+function html_title_views_pre_render(&$view) {
+  // Override views_json handling of node titles because it encodes markup
+  // and we'll assume that the handler does not want markup
+  if ($view->plugin_name == 'views_json') {
+    foreach ($view->result as $k => $result) {
+      if (property_exists($result, 'node_title')) {
+        $view->result[$k]->node_title = strip_tags($result->node_title);
+      }
+    }
+  }
+}
