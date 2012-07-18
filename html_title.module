@@ -42,7 +42,8 @@ function html_title_preprocess_page(&$vars) {
     // Reset title to allow safe HTML
     $vars['title'] = filter_xss($vars['node']->title, $elements);
     // Strip HTML from head title
-    drupal_set_title(strip_tags($vars['node']->title));
+    $vars['head_title'] = strip_tags($vars['node']->title);
+    drupal_set_title($vars['head_title']);
   }
 }
 
