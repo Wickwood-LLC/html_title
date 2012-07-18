@@ -8,16 +8,6 @@
  */
 
 /**
- * Implements hook_help().
- */
-function html_title_help($section) {
-  switch ($section) {
-    case 'admin/modules#description':
-      return t('This module filters node titles for XSS vulnerabilities but allows selected html markup.');
-  }
-}
-
-/**
  * Implementation of hook_menu()
  */
 function html_title_menu() {
