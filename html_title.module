@@ -11,7 +11,7 @@
  * Implementation of hook_menu()
  */
 function html_title_menu() {
-  $items['admin/settings/html_title'] = array(
+  $items['admin/config/html_title'] = array(
     'title'            => 'HTML Title settings',
     'description'      => 'Configure HTML tags used in node titles.',
     'access arguments' => array('administer site configuration'),
