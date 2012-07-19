@@ -24,6 +24,17 @@ function html_title_menu() {
 }
 
 /**
+ * Implementation of hook_theme()
+ */
+function html_title_theme() {
+  return array(
+    'views_view_field__title' => array(
+      'function' => 'html_title_views_view_field__title',
+    ),
+  );
+}
+
+/**
  * Implementation of hook_preprocess_page()
  */
 function html_title_preprocess_page(&$vars) {
@@ -76,4 +87,30 @@ function html_title_views_pre_render(&$view) {
       }
     }
   }
+}
+
+/**
+ * Theme title fields for all views which have the "field" row style.
+ *
+ * This function uses a placeholder to revert the title after it has been
+ * rendered by the views field handler. Another solution might have been to
+ * add a render_item() method to the field handler to bypass the default
+ * render method where the plain text filtering occurs but this solution is
+ * simpler.
+ */
+function html_title_views_view_field__title($view, $field, $row) {
+  // Store title and do XSS filtering
+  $elements = variable_get('html_title_allowed_elements', array('em', 'sub', 'sup'));
+  $title = filter_xss($row->node_title, $elements);
+
+  // Replace title with our placeholder
+  $row->node_title = '%%%HTML_TITLE_PLACEHOLDER%%%';
+
+  // Pass rendering on to the default rendering
+  $output = $view->field['title']->advanced_render($row);
+
+  // Restore our filtered title
+  $output = str_replace('%%%HTML_TITLE_PLACEHOLDER%%%', $title, $output);
+
+  return $output;
 }
