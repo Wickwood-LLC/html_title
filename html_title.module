@@ -97,8 +97,17 @@ function html_title_views_pre_render(&$view) {
  * add a render_item() method to the field handler to bypass the default
  * render method where the plain text filtering occurs but this solution is
  * simpler.
+ *
+ * TODO: Implement a less fragile solution. This one seems likely to miss
+ * cases depending on which views plugin is being used. Nodereference
+ * autocomplete fields are an example.
  */
 function html_title_views_view_field__title($view, $field, $row) {
+  // Strip tags instead of rendering for some types of views plugins
+  if ($view->plugin_name == 'content_php_array_autocomplete') {
+    return strip_tags($row->node_title);
+  }
+
   // Store title and do XSS filtering
   $elements = variable_get('html_title_allowed_elements', array('em', 'sub', 'sup'));
   $title = filter_xss($row->node_title, $elements);
