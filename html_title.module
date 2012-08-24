@@ -51,28 +51,16 @@ function html_title_preprocess_page(&$vars) {
 /**
  * Implementation of hook_preprocess_node()
  */
-function html_title_preprocess_node(&$node) {
-  if (isset($node['html_title_raw'])) {
+function html_title_preprocess_node(&$variables) {
+  if ($variables['view_mode'] == 'full' || $variables['view_mode'] == 'teaser') {
     $elements = variable_get('html_title_allowed_elements', array('em', 'sub', 'sup'));
-    $node['title'] = filter_xss($node['html_title_raw'], $elements);
+    $variables['title'] = filter_xss($variables['elements']['#node']->title, $elements);
   }
 }
 
-/**
- * Implementation of hook_nodeapi().
+/*
+ * TODO: Strip tags from RSS feed item titles. 
  */
-function html_title_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
-  switch ($op) {
-    case 'load':
-      // Capture original title for use in hook_preprocess_node
-      return array('html_title_raw' => $node->title);
-      break;
-    case 'rss item':
-      // Strip html from titles
-      $node->title = strip_tags($node->title);
-      break;
-  }
-}
 
 /**
  * Implementation of hook_views_pre_render
