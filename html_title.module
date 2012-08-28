@@ -58,9 +58,16 @@ function html_title_preprocess_node(&$variables) {
   }
 }
 
-/*
- * TODO: Strip tags from RSS feed item titles. 
- */
+/**
+* Implements hook_node_view().
+*/
+function html_title_node_view($node, $view_mode) {
+  switch ($view_mode) {
+    case 'rss':
+      $node->title = strip_tags($node->title);
+      break;
+  }
+}
 
 /**
  * Implementation of hook_views_pre_render
