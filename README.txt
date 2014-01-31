@@ -2,9 +2,8 @@
 Description
 -----------
 HTML Title allows a limited set of HTML markup to be used in node titles.
-It filters all other markup from titles to prevent XSS vulnerabilities or
-irrational nesting (e.g., links within links).
-
+Title markup is stripped from RSS feeds to eliminate unsightly markup in feed
+readers.
 
 Benefits
 --------
