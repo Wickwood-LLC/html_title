@@ -23,6 +23,28 @@ function html_title_menu() {
 }
 
 /**
+ * Implementation of hook_theme_registry_alter()
+ *
+ * Move our hook_preprocess_search_result so that it runs last
+ */
+function html_title_theme_registry_alter(&$theme_registry) {
+  $preprocess_functions = array();
+  foreach($theme_registry['search_result']['preprocess functions'] as $key => $value) {
+    if ($value == 'html_title_preprocess_search_result') {
+      $callback = $theme_registry['search_result']['preprocess functions'][$key];
+    }
+    else {
+      $preprocess_functions[] = $theme_registry['search_result']['preprocess functions'][$key];
+    }
+  }
+
+  if ($callback) {
+    $preprocess_functions[] = $callback;
+  }
+  $theme_registry['search_result']['preprocess functions'] = $preprocess_functions;
+}
+
+/**
  * Implementation of hook_preprocess_page()
  */
 function html_title_preprocess_page(&$vars) {
@@ -47,7 +69,17 @@ function html_title_preprocess_node(&$node) {
 }
 
 /**
- * Implementation of hook_nodeapi().
+ * Implementation of hook_preprocess_search_result()
+ */
+function html_title_preprocess_search_result(&$vars) {
+  if (isset($vars['result']['title'])) {
+    $elements = variable_get('html_title_allowed_elements', array('em', 'sub', 'sup'));
+    $vars['title'] = filter_xss($vars['result']['title'], $elements);
+  }
+}
+
+/**
+ * Implementation of hook_nodeapi()
  */
 function html_title_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
   switch ($op) {
@@ -63,7 +95,7 @@ function html_title_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 }
 
 /**
-* Implements hook_views_api().
+* Implementation hook_views_api()
 */
 function html_title_views_api() {
   return array(
