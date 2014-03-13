@@ -91,6 +91,12 @@ function html_title_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
       // Strip html from titles
       $node->title = strip_tags($node->title);
       break;
+    case 'view': // Strip html from titles for views feeds using 'node' rendering
+    case 'alter': // Strip html from titles for views feeds using other rendering
+      if ($node->build_mode == NODE_BUILD_RSS) {
+        $node->title = strip_tags($node->title);
+      }
+      break;
   }
 }
 
