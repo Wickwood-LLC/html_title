@@ -6,7 +6,7 @@
 */
 
 /**
-* Implements hook_views_data_alter().
+* Implementation of hook_views_data_alter()
 */
 function html_title_views_data_alter(&$data) {
   // Replace standard node title handler with our own
