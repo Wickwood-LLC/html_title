@@ -53,12 +53,16 @@ function html_title_preprocess_page(&$vars) {
 }
 
 /**
- * Implementation of hook_preprocess_node()
+ * Implementation of template_preprocess_node()
  */
 function html_title_preprocess_node(&$vars) {
-  if ($vars['view_mode'] == 'full' || $vars['view_mode'] == 'teaser') {
-    $elements = variable_get('html_title_allowed_elements', array('em', 'sub', 'sup'));
-    $vars['title'] = filter_xss($vars['elements']['#node']->title, $elements);
+  switch ($vars['view_mode']) {
+    case 'search_index':
+    case 'rss':
+      return;
+    default:
+      $elements = variable_get('html_title_allowed_elements', array('em', 'sub', 'sup'));
+      $vars['title'] = filter_xss($vars['elements']['#node']->title, $elements);
   }
 }
 
