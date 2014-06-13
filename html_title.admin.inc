@@ -20,6 +20,7 @@ function html_title_admin_settings() {
     '#title' => t('Available tags'),
     '#default_value' => variable_get('html_title_allowed_elements', array('em', 'sub', 'sup')),
     '#options' => array(
+      'abbr' => check_plain('<abbr>'),
       'b' => check_plain('<b>'),
       'bdi' => check_plain('<bdi>'),
       'cite' => check_plain('<cite>'),
