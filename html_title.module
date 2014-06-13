@@ -24,24 +24,18 @@ function html_title_menu() {
 
 /**
  * Implementation of hook_theme_registry_alter()
- *
- * Move our hook_preprocess_search_result so that it runs last
  */
 function html_title_theme_registry_alter(&$theme_registry) {
-  $preprocess_functions = array();
-  foreach($theme_registry['search_result']['preprocess functions'] as $key => $value) {
-    if ($value == 'html_title_preprocess_search_result') {
-      $callback = $theme_registry['search_result']['preprocess functions'][$key];
+  // Re-order search result pre-processing so ours always runs last
+  if (module_exists('search') && is_array($theme_registry['search_result']['preprocess functions'])) {
+    foreach($theme_registry['search_result']['preprocess functions'] as $value) {
+      if ($value != 'html_title_preprocess_search_result') {
+        $callbacks[] = $value;
+      }
     }
-    else {
-      $preprocess_functions[] = $theme_registry['search_result']['preprocess functions'][$key];
-    }
+    $callbacks[] = 'html_title_preprocess_search_result';
+    $theme_registry['search_result']['preprocess functions'] = $callbacks;
   }
-
-  if ($callback) {
-    $preprocess_functions[] = $callback;
-  }
-  $theme_registry['search_result']['preprocess functions'] = $preprocess_functions;
 }
 
 /**
