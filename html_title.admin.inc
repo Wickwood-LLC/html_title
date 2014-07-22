@@ -3,6 +3,8 @@
 /**
  * @file
  * Module settings and configuration administration UI.
+ *
+ * @ingroup html_title
  */
 
 /**
