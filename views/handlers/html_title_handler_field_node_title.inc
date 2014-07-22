@@ -1,9 +1,12 @@
 <?php
 
 /**
-* @file
-* Definition of html_title_handler_field_node_title class.
-*/
+ * @file
+ * The html_title_handler_field_node_title field handler re-renders title fields to enable allowed markup that would
+ * otherwise be transformed or stripped.
+ *
+ * @ingroup html_title
+ */
 
 /**
  * Override the standard node title rendering to enable select HTML tags.
@@ -18,7 +21,7 @@ class html_title_handler_field_node_title extends views_handler_field_node {
 
     $elements = variable_get('html_title_allowed_elements', array('em', 'sub', 'sup'));
     if (count($elements)) {
-      static $done = false;
+      static $done = FALSE;
 
       // Ensure this block executes only once
       if (!$done) {
@@ -29,7 +32,7 @@ class html_title_handler_field_node_title extends views_handler_field_node {
           $tags[] = '<'. $element .'>';
         }
         $this->options['alter']['preserve_tags'] .= ' '. implode(' ', $tags);
-        $done = true;
+        $done = TRUE;
       }
 
       // Decode permitted HTML elements

@@ -1,6 +1,10 @@
 <?php
 
 /**
+ * @defgroup html_title HTML Title
+ */
+
+/**
  * @file
  * This module enables limited HTML to be used in node titles. It strips title
  * markup from RSS feeds to eliminate unsightly markup in feed readers.
