@@ -1,7 +1,3 @@
 name = HTML title
 description = Enables limited HTML markup in node titles.
 core = 6.x
-
-; Views Handlers
-files[] = views/html_title.views.inc
-files[] = views/handlers/html_title_handler_field_node_title.inc
