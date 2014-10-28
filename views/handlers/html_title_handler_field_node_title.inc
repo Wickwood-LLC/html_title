@@ -37,7 +37,11 @@ class html_title_handler_field_node_title extends views_handler_field_node {
 
       // Decode permitted HTML elements
       $pattern = "/&lt;(\/?)(". implode('|', $elements) .")&gt;/i";
-      return preg_replace($pattern, '<$1$2>', $output);
+      $output = preg_replace($pattern, '<$1$2>', $output);
+
+      // Decode HTML character entities
+      $pattern = "/&amp;([a-z0-9#]+);/";
+      $output = preg_replace($pattern, '&$1;', $output);
     }
 
     return $output;
