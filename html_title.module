@@ -48,10 +48,16 @@ function html_title_theme_registry_alter(&$theme_registry) {
 function html_title_preprocess_page(&$vars) {
   if (array_key_exists('node', $vars)) {
     $elements = variable_get('html_title_allowed_elements', array('em', 'sub', 'sup'));
+    // Some modules like panels might have already decided about the title to be
+    // used in page. Get the title in that case.
+    $title = drupal_set_title();
+    if (!isset($title)) {
+      $title = $vars['node']->title;
+    }
     // Reset title to allow safe HTML
-    $vars['title'] = filter_xss($vars['node']->title, $elements);
+    $vars['title'] = filter_xss($title, $elements);
     // Strip HTML from head title
-    $vars['head_title'] = strip_tags($vars['node']->title);
+    $vars['head_title'] = strip_tags($title);
     drupal_set_title($vars['head_title']);
   }
 }
